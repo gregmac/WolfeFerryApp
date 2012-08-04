@@ -174,8 +174,10 @@
                                                   '<small class="count">'+formatTime(nextTimes.island)+'</small>');
                                                   
                 // highlight schedule entry
-                $('.sched:not(.sched-'+nextTimes.next.tod+')').removeClass('next');
-                $('.sched.sched-'+nextTimes.next.tod).addClass('next');
+                $('.sched').removeClass('next').removeClass('next-actual');
+                $('.sched.sched-'+nextTimes.island.tod).addClass('next');
+                $('.sched.sched-'+nextTimes.kingston.tod).addClass('next');
+                $('.sched.sched-'+nextTimes.next.tod).addClass('next-actual');
             };
             
             var refreshCameras = function() {
@@ -221,6 +223,9 @@
                 text-align:center;
             }
             ul.schedule li div.next {
+                color:#93B893;
+            }
+            ul.schedule li div.next-actual {
                 color:green;
             }
         </style>
