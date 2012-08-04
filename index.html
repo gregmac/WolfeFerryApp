@@ -8,6 +8,7 @@
         <script src="lib/jquery-1.7.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="lib/jqtouch.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="lib/jqtouch-jquery.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="lib/moment.min.js" type="text/javascript" charset="utf-8"></script>
         
         <script type="text/javascript" charset="utf-8">
             var jQT = new $.jQTouch({
@@ -16,12 +17,121 @@
                 preloadImages: []
             });
             
+            // note: if the schedules change and there are non-equal number of 
+            // crossings, there is a loop below that needs to be updated
+            var schedules = {
+                kingston:[
+                     {h:06,m:15}
+                    ,{h:07,m:15}
+                    ,{h:08,m:30}
+                    ,{h:09,m:30}
+                    ,{h:10,m:30}
+                    ,{h:11,m:30}
+                    ,{h:12,m:30}
+                    ,{h:14,m:00}
+                    ,{h:15,m:00}
+                    ,{h:16,m:00}
+                    ,{h:17,m:00}
+                    ,{h:18,m:00}
+                    ,{h:19,m:00}
+                    ,{h:20,m:00}
+                    ,{h:21,m:00}
+                    ,{h:22,m:00}
+                    ,{h:23,m:20}
+                    ,{h:00,m:40}
+                    ,{h:02,m:00}
+                ],
+                island:[
+                     {h:05,m:45}
+                    ,{h:06,m:45}
+                    ,{h:07,m:45}
+                    ,{h:09,m:00}
+                    ,{h:10,m:00}
+                    ,{h:11,m:00}
+                    ,{h:12,m:00}
+                    ,{h:13,m:15}
+                    ,{h:14,m:30}
+                    ,{h:15,m:30}
+                    ,{h:16,m:30}
+                    ,{h:17,m:30}
+                    ,{h:18,m:30}
+                    ,{h:19,m:30}
+                    ,{h:20,m:30}
+                    ,{h:21,m:30}
+                    ,{h:22,m:40}
+                    ,{h:00,m:00}
+                    ,{h:01,m:20}
+                ]
+            };
+            
+            /** Returns the time object corresponding to the next time.
+             * Note that the object will not be exactly identical to the 
+             * original from the array, it also has a .days property (which
+             * will either be 0 or 1, indicating how many days to add to now)
+             */
+            var findNextTime = function(schedule) {                
+                var now = new moment();
+                var nextTime = null;
+                $.each(schedule, function() {
+                    if (nextTime == null && this.h > now.hours() || (this.h == now.hours() && this.m >= now.minutes())) {
+                        nextTime = this;
+                    }
+                });
+                if (nextTime != null) {
+                    // next time is later today
+                    nextTime.days = 0;
+                } else {
+                    // next time is the first one tomorrow, grab schedule[0]
+                    nextTime = schedule[0];
+                    nextTime.days = 1;
+                }
+                return nextTime;
+            }
+            /** Finds the next datetime the ferry comes at.
+             * Returns a momment object
+             */
+            var findNextDate = function(schedule) {
+                var nextTime = findNextTime(schedule);
+                return moment(new Date(now.year(),now.month(),now.date()+nextTime.days,
+                                       nextTime.h,nextTime.m));
+            }
+            
+            var formatTime = function(time) {
+                var m = ((time.m < 10) ? '0'+time.m : time.m);
+                if (time.h == 0) {
+                    return '12:'+m+' AM';
+                } else if (time.h < 12) {
+                    return time.h+':'+m+' AM';
+                } else if (time.h == 12) {
+                    return time.h+':'+m+' PM';
+                } else {
+                    return (time.h-12)+':'+m+' PM';
+                }
+            }
+            
+            var populateSchedulePage = function() {
+                var titles = '<li class="sep"><div>From Island</div><div>From Kingston</div></li>';
+                var html = titles;
+                //Note: this loop needs to be modified if the crossing times are ever not equal
+                for (var i = 0; i < schedules.kingston.length; i++) {
+                    html += '<li><div>'+formatTime(schedules.island[i])+'</div>' + 
+                            '<div>'+formatTime(schedules.kingston[i])+'</div></li>';
+                }
+                html += titles;
+                
+                console.log($('#schedule ul.schedule'));
+                console.log(html);
+                $('#schedule ul.schedule').html(html);
+            };
+            
             // Some sample Javascript functions:
             $(function(){
                 // Orientation callback event
                 $('#jqt').bind('turn', function(e, data){
                     $('#orient').html('Orientation: ' + data.orientation);
                 });
+                
+                populateSchedulePage();
             });
         </script>        
         <style type="text/css" media="screen">
@@ -29,6 +139,12 @@
                 display: none;
             }
             li.cam {
+                text-align:center;
+            }
+            
+            ul.schedule li div {
+                width:48%;
+                float:left;
                 text-align:center;
             }
         </style>
@@ -40,6 +156,9 @@
                     <h1>Wolfe Island Ferry</h1>
                 </div>
                 <div class="scroll">
+                    <ul class="rounded">
+                        <li class="arrow"><a href="#schedule">Schedule</a> </li>
+                    </ul>
                     <h2>Cameras</h2>
                     <ul class="rounded">
                         <li class="arrow"><a href="#kingston">Kingston Dock</a> </li>
@@ -56,7 +175,7 @@
                     <h1>Ferry Schedule</h1>
                     <a href="#" class="back">Back</a>
                 </div>
-                
+                <ul class="edgetoedge scroll schedule"></ul>
             </div>
             <div id="kingston">
                 <div class="toolbar">
