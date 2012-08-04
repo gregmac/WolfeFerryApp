@@ -110,7 +110,6 @@
                     }
                 }
                 for (var i = 1; i<schedules.island.length; i++) {
-                    console.log(tod, i, schedules.island[i-1].tod, schedules.island[i].tod);
                     if ((tod >= schedules.island[i-1].tod) 
                         && (tod < schedules.island[i].tod)) {
                              
@@ -164,8 +163,6 @@
                 }
                 html += titles;
                 
-                console.log($('#schedule ul.schedule'));
-                console.log(html);
                 $('#schedule ul.schedule').html(html);
             };
             
@@ -181,14 +178,18 @@
                 $('.sched.sched-'+nextTimes.next.tod).addClass('next');
             };
             
+            var refreshCameras = function() {
+                var hash = new Date().getTime();
+                console.log('refreshing cams', hash);
+                $('.cam img').each(function() {
+                    $(this).attr('src', $(this).data('src')+'?');
+                });
+            };
             
             
             var schedules = buildSchedules();
             
             var nextTimes = null; // periodically refreshed with the next times
-            refreshNextTimes();
-            setInterval(refreshNextTimes, 1000);
-            
             
             $(function(){
                 // Orientation callback event
@@ -197,7 +198,12 @@
                 });
                 
                 populateSchedulePage();
+                    
+                refreshNextTimes();
+                setInterval(refreshNextTimes, 45000);  // 45s
                 
+                refreshCameras();
+                setInterval(refreshCameras, 120000); // 2mins (MTO only updates every 2 mins)
                 
             });
         </script>        
@@ -254,7 +260,7 @@
                 </div>
                 <ul class="edgetoedge scroll">
                     <li class="next-departure"></li>
-                    <li class="cam"><img src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc56.jpg" /></li>
+                    <li class="cam"><img data-src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc56.jpg" /></li>
                 </ul>
             </div>
             <div id="marysville" class="island">
@@ -264,8 +270,8 @@
                 </div>
                 <ul class="edgetoedge scroll">
                     <li class="next-departure"></li>
-                    <li class="cam"><img src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc57.jpg" /></li>
-                    <li class="cam"><img src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc58.jpg" /></li>
+                    <li class="cam"><img data-src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc57.jpg" /></li>
+                    <li class="cam"><img data-src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc58.jpg" /></li>
                 </ul>
             </div>
             <div id="dawsons" class="island">
@@ -275,8 +281,8 @@
                 </div>
                 <ul class="edgetoedge scroll">
                     <li class="next-departure"></li>
-                    <li class="cam"><img src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc60.jpg" /></li>
-                    <li class="cam"><img src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc59.jpg" /></li>
+                    <li class="cam"><img data-src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc60.jpg" /></li>
+                    <li class="cam"><img data-src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc59.jpg" /></li>
                 </ul>
             </div>
         </div>
