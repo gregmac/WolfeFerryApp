@@ -17,83 +17,122 @@
                 preloadImages: []
             });
             
-            // note: if the schedules change and there are non-equal number of 
-            // crossings, there is a loop below that needs to be updated
-            var schedules = {
-                kingston:[
-                     {h:06,m:15}
-                    ,{h:07,m:15}
-                    ,{h:08,m:30}
-                    ,{h:09,m:30}
-                    ,{h:10,m:30}
-                    ,{h:11,m:30}
-                    ,{h:12,m:30}
-                    ,{h:14,m:00}
-                    ,{h:15,m:00}
-                    ,{h:16,m:00}
-                    ,{h:17,m:00}
-                    ,{h:18,m:00}
-                    ,{h:19,m:00}
-                    ,{h:20,m:00}
-                    ,{h:21,m:00}
-                    ,{h:22,m:00}
-                    ,{h:23,m:20}
-                    ,{h:00,m:40}
-                    ,{h:02,m:00}
-                ],
-                island:[
-                     {h:05,m:45}
-                    ,{h:06,m:45}
-                    ,{h:07,m:45}
-                    ,{h:09,m:00}
-                    ,{h:10,m:00}
-                    ,{h:11,m:00}
-                    ,{h:12,m:00}
-                    ,{h:13,m:15}
-                    ,{h:14,m:30}
-                    ,{h:15,m:30}
-                    ,{h:16,m:30}
-                    ,{h:17,m:30}
-                    ,{h:18,m:30}
-                    ,{h:19,m:30}
-                    ,{h:20,m:30}
-                    ,{h:21,m:30}
-                    ,{h:22,m:40}
-                    ,{h:00,m:00}
-                    ,{h:01,m:20}
-                ]
-            };
-            
-            /** Returns the time object corresponding to the next time.
-             * Note that the object will not be exactly identical to the 
-             * original from the array, it also has a .days property (which
-             * will either be 0 or 1, indicating how many days to add to now)
-             */
-            var findNextTime = function(schedule) {                
-                var now = new moment();
-                var nextTime = null;
-                $.each(schedule, function() {
-                    if (nextTime == null && this.h > now.hours() || (this.h == now.hours() && this.m >= now.minutes())) {
-                        nextTime = this;
-                    }
+            var buildSchedules = function() {
+                // note: if the schedules change and there are non-equal number of 
+                // crossings, there is a loop below that needs to be updated
+                var schedules = {
+                    kingston:[
+                         {h:06,m:15}
+                        ,{h:07,m:15}
+                        ,{h:08,m:30}
+                        ,{h:09,m:30}
+                        ,{h:10,m:30}
+                        ,{h:11,m:30}
+                        ,{h:12,m:30}
+                        ,{h:14,m:00}
+                        ,{h:15,m:00}
+                        ,{h:16,m:00}
+                        ,{h:17,m:00}
+                        ,{h:18,m:00}
+                        ,{h:19,m:00}
+                        ,{h:20,m:00}
+                        ,{h:21,m:00}
+                        ,{h:22,m:00}
+                        ,{h:23,m:20}
+                        ,{h:00,m:40}
+                        ,{h:02,m:00}
+                    ],
+                    island:[
+                         {h:05,m:45}
+                        ,{h:06,m:45}
+                        ,{h:07,m:45}
+                        ,{h:09,m:00}
+                        ,{h:10,m:00}
+                        ,{h:11,m:00}
+                        ,{h:12,m:00}
+                        ,{h:13,m:15}
+                        ,{h:14,m:30}
+                        ,{h:15,m:30}
+                        ,{h:16,m:30}
+                        ,{h:17,m:30}
+                        ,{h:18,m:30}
+                        ,{h:19,m:30}
+                        ,{h:20,m:30}
+                        ,{h:21,m:30}
+                        ,{h:22,m:40}
+                        ,{h:00,m:00}
+                        ,{h:01,m:20}
+                    ]
+                };
+                
+                // expand out the base objects
+                
+                $.each(schedules.kingston, function(i) {
+                    var tod = (this.h*60)+this.m; // time-of-day serves as our ID
+                    schedules.kingston[i] = {
+                        tod:tod,
+                        h:this.h,
+                        m:this.m,
+                        departing:'Kingston'
+                    };
                 });
-                if (nextTime != null) {
-                    // next time is later today
-                    nextTime.days = 0;
-                } else {
-                    // next time is the first one tomorrow, grab schedule[0]
-                    nextTime = schedule[0];
-                    nextTime.days = 1;
-                }
-                return nextTime;
+                $.each(schedules.island, function(i) {
+                    var tod = (this.h*60)+this.m; // time-of-day serves as our ID
+                    schedules.island[i] = {
+                        tod:tod,
+                        h:this.h,
+                        m:this.m,
+                        departing:'Island'
+                    };
+                });
+                
+                return schedules;
             }
-            /** Finds the next datetime the ferry comes at.
-             * Returns a momment object
+            
+            /** Returns an object containing the next departure times for
+             * .kingston, .island, and .next. 
+             * A .date property (moment object) is also added to the time objects, 
+             * indicating the percise date/time of next crossing.
              */
-            var findNextDate = function(schedule) {
-                var nextTime = findNextTime(schedule);
-                return moment(new Date(now.year(),now.month(),now.date()+nextTime.days,
-                                       nextTime.h,nextTime.m));
+            var findNextTimes = function() {                
+                var now = new moment();
+                var tod = (now.hours()*60) + now.minutes();
+                var nextTime = null;
+                var next = {
+                    kingston: schedules.kingston[0],
+                    island: schedules.island[0],
+                };
+                for (var i = 1; i<schedules.kingston.length; i++) {
+                    if ((tod >= schedules.kingston[i-1].tod) 
+                        && (tod < schedules.kingston[i].tod)) {
+                             
+                        next.kingston = schedules.kingston[i];
+                    }
+                }
+                for (var i = 1; i<schedules.island.length; i++) {
+                    console.log(tod, i, schedules.island[i-1].tod, schedules.island[i].tod);
+                    if ((tod >= schedules.island[i-1].tod) 
+                        && (tod < schedules.island[i].tod)) {
+                             
+                        next.island = schedules.island[i];
+                    }
+                }
+                
+                next.kingston.date = moment(
+                    new Date(now.year(),
+                             now.month(),
+                             now.date() + ((next.kingston.tod < tod) ? 1 : 0),
+                             next.kingston.h,
+                             next.kingston.m));
+                next.island.date = moment(
+                    new Date(now.year(),
+                             now.month(),
+                             now.date() + ((next.island.tod < tod) ? 1 : 0),
+                             next.island.h,
+                             next.island.m));
+                
+                next.next = (next.kingston.date.valueOf() < next.island.date.valueOf()) ? next.kingston : next.island;
+                return next;
             }
             
             var formatTime = function(time) {
@@ -112,10 +151,16 @@
             var populateSchedulePage = function() {
                 var titles = '<li class="sep"><div>From Island</div><div>From Kingston</div></li>';
                 var html = titles;
+                
                 //Note: this loop needs to be modified if the crossing times are ever not equal
+                if (schedules.kingston.length != schedules.island.length) {
+                    alert('Times do not match! populateSchedulePage() has to be updated.');
+                    return;
+                };
+                
                 for (var i = 0; i < schedules.kingston.length; i++) {
-                    html += '<li><div>'+formatTime(schedules.island[i])+'</div>' + 
-                            '<div>'+formatTime(schedules.kingston[i])+'</div></li>';
+                    html += '<li><div class="sched sched-'+schedules.island[i].tod+'">'+formatTime(schedules.island[i])+'</div>' + 
+                            '<div class="sched sched-'+schedules.kingston[i].tod+'">'+formatTime(schedules.kingston[i])+'</div></li>';
                 }
                 html += titles;
                 
@@ -124,7 +169,27 @@
                 $('#schedule ul.schedule').html(html);
             };
             
-            // Some sample Javascript functions:
+            var refreshNextTimes = function() {
+                nextTimes = findNextTimes();
+                $('.kingston .next-departure').html('<em>Next trip:</em> '+nextTimes.kingston.date.fromNow()+
+                                                    '<small class="count">'+formatTime(nextTimes.kingston)+'</small>');
+                $('.island .next-departure').html('<em>Next trip:</em> '+nextTimes.island.date.fromNow()+
+                                                  '<small class="count">'+formatTime(nextTimes.island)+'</small>');
+                                                  
+                // highlight schedule entry
+                $('.sched:not(.sched-'+nextTimes.next.tod+')').removeClass('next');
+                $('.sched.sched-'+nextTimes.next.tod).addClass('next');
+            };
+            
+            
+            
+            var schedules = buildSchedules();
+            
+            var nextTimes = null; // periodically refreshed with the next times
+            refreshNextTimes();
+            setInterval(refreshNextTimes, 1000);
+            
+            
             $(function(){
                 // Orientation callback event
                 $('#jqt').bind('turn', function(e, data){
@@ -132,6 +197,8 @@
                 });
                 
                 populateSchedulePage();
+                
+                
             });
         </script>        
         <style type="text/css" media="screen">
@@ -146,6 +213,9 @@
                 width:48%;
                 float:left;
                 text-align:center;
+            }
+            ul.schedule li div.next {
+                color:green;
             }
         </style>
     </head>
@@ -177,31 +247,34 @@
                 </div>
                 <ul class="edgetoedge scroll schedule"></ul>
             </div>
-            <div id="kingston">
+            <div id="kingston" class="kingston">
                 <div class="toolbar">
                     <h1>Kingston Dock</h1>
                     <a href="#" class="back">Back</a>
                 </div>
                 <ul class="edgetoedge scroll">
+                    <li class="next-departure"></li>
                     <li class="cam"><img src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc56.jpg" /></li>
                 </ul>
             </div>
-            <div id="marysville">
+            <div id="marysville" class="island">
                 <div class="toolbar">
                     <h1>Marysville (Summer Dock)</h1>
                     <a href="#" class="back">Back</a>
                 </div>
                 <ul class="edgetoedge scroll">
+                    <li class="next-departure"></li>
                     <li class="cam"><img src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc57.jpg" /></li>
                     <li class="cam"><img src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc58.jpg" /></li>
                 </ul>
             </div>
-            <div id="dawsons">
+            <div id="dawsons" class="island">
                 <div class="toolbar">
                     <h1>Dawson's Point (Winter Dock)</h1>
                     <a href="#" class="back">Back</a>
                 </div>
                 <ul class="edgetoedge scroll">
+                    <li class="next-departure"></li>
                     <li class="cam"><img src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc60.jpg" /></li>
                     <li class="cam"><img src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc59.jpg" /></li>
                 </ul>
