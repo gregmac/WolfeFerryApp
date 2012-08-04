@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>jQTouch &beta;</title>
+        <link rel="stylesheet" href="css/jqtouch.css" title="jQTouch">
+    
+        <script src="lib/jquery-1.7.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="lib/jqtouch.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="lib/jqtouch-jquery.min.js" type="text/javascript" charset="utf-8"></script>
+        
+        <script type="text/javascript" charset="utf-8">
+            var jQT = new $.jQTouch({
+                addGlossToIcon: false,
+                statusBar: 'black-translucent',
+                preloadImages: []
+            });
+            
+            // Some sample Javascript functions:
+            $(function(){
+                // Orientation callback event
+                $('#jqt').bind('turn', function(e, data){
+                    $('#orient').html('Orientation: ' + data.orientation);
+                });
+            });
+        </script>        
+        <style type="text/css" media="screen">
+            #jqt.fullscreen #home .info {
+                display: none;
+            }
+            li.cam {
+                text-align:center;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="jqt">
+            <div id="home" class="current">
+                <div class="toolbar">
+                    <h1>Wolfe Island Ferry</h1>
+                </div>
+                <div class="scroll">
+                    <h2>Cameras</h2>
+                    <ul class="rounded">
+                        <li class="arrow"><a href="#kingston">Kingston Dock</a> </li>
+                        <li class="arrow"><a href="#marysville">Island - Marysville Dock (Summer)</a> </li>
+                        <li class="arrow"><a href="#dawsons">Island - Dawsons Point (Winter)</a> </li>
+                    </ul>
+                    <div class="info">
+                        <p>Add this page to your home screen.</p>
+                    </div>
+                </div>
+            </div>
+            <div id="schedule">
+                <div class="toolbar">
+                    <h1>Ferry Schedule</h1>
+                    <a href="#" class="back">Back</a>
+                </div>
+                
+            </div>
+            <div id="kingston">
+                <div class="toolbar">
+                    <h1>Kingston Dock</h1>
+                    <a href="#" class="back">Back</a>
+                </div>
+                <ul class="edgetoedge scroll">
+                    <li class="cam"><img src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc56.jpg" /></li>
+                </ul>
+            </div>
+            <div id="marysville">
+                <div class="toolbar">
+                    <h1>Marysville (Summer Dock)</h1>
+                    <a href="#" class="back">Back</a>
+                </div>
+                <ul class="edgetoedge scroll">
+                    <li class="cam"><img src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc57.jpg" /></li>
+                    <li class="cam"><img src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc58.jpg" /></li>
+                </ul>
+            </div>
+            <div id="dawsons">
+                <div class="toolbar">
+                    <h1>Dawson's Point (Winter Dock)</h1>
+                    <a href="#" class="back">Back</a>
+                </div>
+                <ul class="edgetoedge scroll">
+                    <li class="cam"><img src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc60.jpg" /></li>
+                    <li class="cam"><img src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc59.jpg" /></li>
+                </ul>
+            </div>
+        </div>
+    </body>
+</html>
