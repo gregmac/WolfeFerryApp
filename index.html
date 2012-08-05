@@ -102,21 +102,27 @@
                     kingston: schedules.kingston[0],
                     island: schedules.island[0],
                 };
+                var compareTimes = function(start, compare, end) {
+                    // if end > start, compare comes between start and end
+                    // or, end < start (eg, from 11pm to 1am), 
+                    //     compare is before start (eg, 1am)
+                    //     xor compare is after end (eg, 11pm)
+                    if (end < start) {
+                        console.log('end<start', end, start, compare, (compare < start), (compare > end));
+                    }
+                    return ((end > start) && (compare >= start) && (compare < end))
+                           || ((end < start) 
+                               &&  ((compare < start) || (compare > end))
+                               && !((compare < start) && (compare > end))); //xor
+                }
+
                 for (var i = 1; i<schedules.kingston.length; i++) {
-                    if ((tod >= schedules.kingston[i-1].tod) // before last time, AND: 
-                        && ((tod < schedules.kingston[i].tod) // (before next time,  OR
-                            || (schedules.kingston[i].tod < schedules.kingston[i-1].tod)) // next time is tomorrow)
-                       ) {
-                             
+                    if (compareTimes(schedules.kingston[i-1].tod, tod, schedules.kingston[i].tod)) {
                         next.kingston = schedules.kingston[i];
                     }
                 }
-                for (var i = 1; i<schedules.island.length; i++) {
-                    if ((tod >= schedules.island[i-1].tod) 
-                        && ((tod < schedules.island[i].tod) 
-                            || (schedules.island[i].tod < schedules.island[i-1].tod))
-                       ) {
-                             
+                for (var i = 1; i<schedules.island.length; i++) {                    
+                    if (compareTimes(schedules.island[i-1].tod, tod, schedules.island[i].tod)) {
                         next.island = schedules.island[i];
                     }
                 }
