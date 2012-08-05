@@ -103,15 +103,19 @@
                     island: schedules.island[0],
                 };
                 for (var i = 1; i<schedules.kingston.length; i++) {
-                    if ((tod >= schedules.kingston[i-1].tod) 
-                        && (tod < schedules.kingston[i].tod)) {
+                    if ((tod >= schedules.kingston[i-1].tod) // before last time, AND: 
+                        && ((tod < schedules.kingston[i].tod) // (before next time,  OR
+                            || (schedules.kingston[i].tod < schedules.kingston[i-1].tod)) // next time is tomorrow)
+                       ) {
                              
                         next.kingston = schedules.kingston[i];
                     }
                 }
                 for (var i = 1; i<schedules.island.length; i++) {
                     if ((tod >= schedules.island[i-1].tod) 
-                        && (tod < schedules.island[i].tod)) {
+                        && ((tod < schedules.island[i].tod) 
+                            || (schedules.island[i].tod < schedules.island[i-1].tod))
+                       ) {
                              
                         next.island = schedules.island[i];
                     }
