@@ -188,10 +188,18 @@
                 });
             };
             
+            var nextTimer, cameraTimer;
+            var ensureRefreshRunning = function() {
+                nextTimer = setInterval(refreshNextTimes, 45000);  // 45s
+                cameraTimer = setInterval(refreshCameras, 120000); // 2mins (MTO only updates every 2 mins)
+            };
+            
             
             var schedules = buildSchedules();
             
             var nextTimes = null; // periodically refreshed with the next times
+            
+            
             
             $(function(){
                 // Orientation callback event
@@ -202,10 +210,9 @@
                 populateSchedulePage();
                     
                 refreshNextTimes();
-                setInterval(refreshNextTimes, 45000);  // 45s
-                
                 refreshCameras();
-                setInterval(refreshCameras, 120000); // 2mins (MTO only updates every 2 mins)
+                
+                ensureRefreshRunning();
                 
             });
         </script>        
