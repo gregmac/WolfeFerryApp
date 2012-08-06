@@ -197,7 +197,7 @@
                 var hash = new Date().getTime();
                 console.log('refreshing cams', hash);
                 $('.cam img').each(function() {
-                    $(this).attr('src', $(this).data('src')+'?');
+                    $(this).attr('src', $(this).data('src')+'?'+hash);
                 });
             };
             
