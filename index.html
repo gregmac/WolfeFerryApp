@@ -252,23 +252,25 @@
             };
 
             var refreshLocation = function() {
-                navigator.geolocation.getCurrentPosition(
-                    function (pos) { 
-                        console.log(pos); 
-                        var onIsland = isInside([pos.coords.latitude,pos.coords.longitude], wolfeIslandBounds);
-                        console.log("on island? ", onIsland);
-                        if (onIsland) {
-                            $('body').removeClass('gps-kingston').addClass('gps-island');
-                        } else {
-                            $('body').removeClass('gps-island').addClass('gps-kingston');
-                        }
-                    },
-                    function () {
-                        // can't find position
-                        console.log("geolocation failed");
-                        $('body').removeClass('gps-kingston').removeClass('gps-island');
-                    },
-                    {timeout:10000})
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(
+                        function (pos) { 
+                            console.log(pos); 
+                            var onIsland = isInside([pos.coords.latitude,pos.coords.longitude], wolfeIslandBounds);
+                            console.log("on island? ", onIsland);
+                            if (onIsland) {
+                                $('body').removeClass('gps-kingston').addClass('gps-island');
+                            } else {
+                                $('body').removeClass('gps-island').addClass('gps-kingston');
+                            }
+                        },
+                        function () {
+                            // can't find position
+                            console.log("geolocation failed");
+                            $('body').removeClass('gps-kingston').removeClass('gps-island');
+                        },
+                        {timeout:10000})
+                    }
             };
 
             
