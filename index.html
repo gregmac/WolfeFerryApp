@@ -89,6 +89,21 @@
                 return schedules;
             }
             
+
+            var wolfeIslandBounds = [
+                [44.234161,-76.398870],
+                [44.182973,-76.526586],
+                [44.149973,-76.557485],
+                [44.103150,-76.492253],
+                [44.092794,-76.442815],
+                [44.132727,-76.351491],
+                [44.183958,-76.330892],
+                [44.202174,-76.295186],
+                [44.203159,-76.235831],
+                [44.230225,-76.172660],
+                [44.242033,-76.182960]
+            ];
+
             /** Returns an object containing the next departure times for
              * .kingston, .island, and .next. 
              * A .date property (moment object) is also added to the time objects, 
@@ -140,7 +155,13 @@
                              next.island.h,
                              next.island.m));
                 
-                next.next = (next.kingston.date.valueOf() < next.island.date.valueOf()) ? next.kingston : next.island;
+                if (next.kingston.date.valueOf() < next.island.date.valueOf()) {
+                    next.next = next.kingston;
+                    next.next_location = 'kingston';
+                } else {
+                    next.next = next.island;
+                    next.next_location = 'island';
+                }
                 return next;
             }
             
@@ -181,16 +202,24 @@
             
             var refreshNextTimes = function() {
                 nextTimes = findNextTimes();
-                $('.kingston .next-departure').html('<em>Next trip:</em> '+nextTimes.kingston.date.fromNow()+
-                                                    '<small class="count">'+formatTime(nextTimes.kingston)+'</small>');
-                $('.island .next-departure').html('<em>Next trip:</em> '+nextTimes.island.date.fromNow()+
-                                                  '<small class="count">'+formatTime(nextTimes.island)+'</small>');
-                                                  
+
+                $('.kingston.next-departure').html('<em>Ferry leaves Kinston</em> '+nextTimes.kingston.date.fromNow()+
+                                                   '<small class="count">'+formatTime(nextTimes.kingston)+'</small>');
+                $('.island.next-departure').html('<em>Ferry leaves Island</em> '+nextTimes.island.date.fromNow()+
+                                                 '<small class="count">'+formatTime(nextTimes.island)+'</small>');
+                
                 // highlight schedule entry
                 $('.sched').removeClass('next').removeClass('next-actual');
                 $('.sched.sched-'+nextTimes.island.tod).addClass('next');
                 $('.sched.sched-'+nextTimes.kingston.tod).addClass('next');
                 $('.sched.sched-'+nextTimes.next.tod).addClass('next-actual');
+
+                // set body
+                if (nextTimes.next_location == 'kingston') {
+                    $('body').removeClass('next-island').addClass('next-kingston');
+                } else {
+                    $('body').removeClass('next-kingston').addClass('next-island');
+                }
             };
             
             var refreshCameras = function() {
@@ -200,11 +229,54 @@
                     $(this).attr('src', $(this).data('src')+'?'+hash);
                 });
             };
+
             
-            var nextTimer, cameraTimer;
+            // from https://github.com/substack/point-in-polygon, MIT
+            var isInside = function (point, vs) {
+                // ray-casting algorithm based on
+                // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+                
+                var x = point[0], y = point[1];
+                
+                var inside = false;
+                for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+                    var xi = vs[i][0], yi = vs[i][1];
+                    var xj = vs[j][0], yj = vs[j][1];
+                    
+                    var intersect = ((yi > y) != (yj > y))
+                        && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+                    if (intersect) inside = !inside;
+                }
+                
+                return inside;
+            };
+
+            var refreshLocation = function() {
+                navigator.geolocation.getCurrentPosition(
+                    function (pos) { 
+                        console.log(pos); 
+                        var onIsland = isInside([pos.coords.latitude,pos.coords.longitude], wolfeIslandBounds);
+                        console.log("on island? ", onIsland);
+                        if (onIsland) {
+                            $('body').removeClass('gps-kingston').addClass('gps-island');
+                        } else {
+                            $('body').removeClass('gps-island').addClass('gps-kingston');
+                        }
+                    },
+                    function () {
+                        // can't find position
+                        console.log("geolocation failed");
+                        $('body').removeClass('gps-kingston').removeClass('gps-island');
+                    },
+                    {timeout:10000})
+            };
+
+            
+            var nextTimer, cameraTimer, locationTimer;
             var ensureRefreshRunning = function() {
                 nextTimer = setInterval(refreshNextTimes, 45000);  // 45s
                 cameraTimer = setInterval(refreshCameras, 120000); // 2mins (MTO only updates every 2 mins)
+                locationTimer = setInterval(refreshLocation, 600000); // 10mins
             };
             
             
@@ -224,6 +296,7 @@
                     
                 refreshNextTimes();
                 refreshCameras();
+                refreshLocation();
                 
                 ensureRefreshRunning();
                 
@@ -251,6 +324,25 @@
             ul.schedule li div.next-actual {
                 color:green;
             }
+
+            /* hide/show the next-depature section */
+            #home li.next-departure {
+                display:none;
+            }
+            body.next-kingston #home li.kingston,
+            body.gps-kingston #home li.kingston {
+                display:block;
+            }
+            body.next-island #home li.island,
+            body.gps-island #home li.island {
+                display:block;
+            }
+            body.gps-kingston.next-island #home li.island {
+                display:none;
+            }
+            body.gps-island.next-kingston #home li.kingston {
+                display:none;
+            }
         </style>
     </head>
     <body>
@@ -260,8 +352,14 @@
                     <h1>Wolfe Island Ferry</h1>
                 </div>
                 <div class="scroll">
+                    <ul class="edgetoedge scroll">
+                        <li class="kingston next-departure gps"></li>
+                        <li class="island next-departure gps"></li>
+                    </ul>
                     <ul class="rounded">
                         <li class="arrow"><a href="#schedule">Schedule</a> </li>
+                        <li class="arrow"><a href="#map">Live Map</a> </li>
+                        <li class="arrow"><a href="#twitter">Twitter</a> </li>
                     </ul>
                     <h2>Cameras</h2>
                     <ul class="rounded">
@@ -281,14 +379,42 @@
                 </div>
                 <ul class="edgetoedge scroll schedule"></ul>
             </div>
+            <div id="map">
+                <div class="toolbar">
+                    <h1>Live Map (AIS)</h1>
+                    <a href="#" class="back">Back</a>
+                </div>
+                <div>
+                    <iframe name="marinetraffic" id="marinetraffic" 
+                        width="100%" height="480" 
+                        scrolling="no" frameborder="1" 
+                        src="http://www.marinetraffic.com/en/ais/embed/zoom:12/centery:44.214/centerx:-76.47461/maptype:0/shownames:false/mmsi:381661/shipid:381661/fleet:/fleet_id:/vtypes:/showmenu:false/remember:false">
+                        Sorry, this feature is not supported on your browser.
+                    </iframe>
+                </div>
+            </div>
+            <div id="twitter">
+                <div class="toolbar">
+                    <h1>Twitter</h1>
+                    <a href="#" class="back">Back</a>
+                </div>
+                <div id="twitter-timeline">
+                        <a class="twitter-timeline" 
+                            data-dnt="true" data-theme="dark" data-tweet-limit="24" data-chrome="noheader"
+                            href="https://twitter.com/groogs/lists/wolfeisland?ref_src=twsrc%5Etfw">
+                            Loading..
+                        </a> 
+                        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                </div>
+            </div>
             <div id="kingston" class="kingston">
                 <div class="toolbar">
                     <h1>Kingston Dock</h1>
                     <a href="#" class="back">Back</a>
                 </div>
                 <ul class="edgetoedge scroll">
-                    <li class="next-departure"></li>
-                    <li class="cam"><img data-src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc56.jpg" /></li>
+                    <li class="kingston next-departure"></li>
+                    <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc56.jpg" /></li>
                 </ul>
             </div>
             <div id="marysville" class="island">
@@ -297,9 +423,9 @@
                     <a href="#" class="back">Back</a>
                 </div>
                 <ul class="edgetoedge scroll">
-                    <li class="next-departure"></li>
-                    <li class="cam"><img data-src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc57.jpg" /></li>
-                    <li class="cam"><img data-src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc58.jpg" /></li>
+                    <li class="island next-departure"></li>
+                    <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc57.jpg" /></li>
+                    <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc58.jpg" /></li>
                 </ul>
             </div>
             <div id="dawsons" class="island">
@@ -308,9 +434,10 @@
                     <a href="#" class="back">Back</a>
                 </div>
                 <ul class="edgetoedge scroll">
-                    <li class="next-departure"></li>
-                    <li class="cam"><img data-src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc60.jpg" /></li>
-                    <li class="cam"><img data-src="http://www.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc59.jpg" /></li>
+                    <li class="island next-departure"></li>
+                    <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc60.jpg" /></li>
+                    <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc62.jpg" /></li>
+                    <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc59.jpg" /></li>
                 </ul>
             </div>
         </div>
