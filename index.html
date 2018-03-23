@@ -303,7 +303,8 @@
             });
         </script>        
         <style type="text/css" media="screen">
-            #jqt.fullscreen #home .info {
+            #jqt.fullscreen .add-to-home,
+            .add-to-home {  /* disable for now */
                 display: none;
             }
             #jqt .toolbar > h1 {
@@ -329,6 +330,10 @@
             }
             ul.schedule li div.next-actual {
                 color:green;
+            }
+
+            #jqt ul li a.inline { 
+                display:inline;
             }
 
             /* hide/show the next-depature section */
@@ -373,10 +378,8 @@
                         <li class="arrow"><a href="#twitter">Twitter</a> </li>
                         <li class="arrow"><a href="#map">Live Map</a> </li>
                         <li class="arrow"><a href="#schedule">Schedule</a> </li>
+                        <li class="arrow"><a href="#about">About</a> </li>
                     </ul>
-                    <div class="info">
-                        <p>Add this page to your home screen.</p>
-                    </div>
                 </div>
             </div>
             <div id="schedule">
@@ -446,6 +449,28 @@
                     <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc62.jpg" /></li>
                     <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc59.jpg" /></li>
                 </ul>
+            </div>
+            <div id="about">
+                <div class="toolbar">
+                    <h1>About</h1>
+                    <a href="#" class="back">Back</a>
+                </div>
+                <div>
+                    <ul>
+                        <li>
+                            This was created as a quick way to get schedules, camera feeds and other news about the ferry. I hope you find it useful.
+                            - <a class="inline" href="https://twitter.com/groogs" target="_blank">Greg</a>
+                        </li>
+                        <li>AIS maps from <a class="inline" href="https://www.marinetraffic.com/en/ais/home/centerx:-76.3/centery:44.2/zoom:11" target="_blank">MarineTraffic.com</a></li>
+                        <li>Report bugs/suggestions on <a class="inline" href="https://github.com/gregmac/WolfeFerryApp/issues" target="_blank">GitHub</a></li>
+                    </ul>
+                    <p>
+                        
+                    </p>
+                </div>
+                <div class="info add-to-home">
+                    <p>Add this page to your home screen.</p>
+                </div>
             </div>
         </div>
     </body>
