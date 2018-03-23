@@ -155,7 +155,13 @@
                              next.island.h,
                              next.island.m));
                 
-                next.next = (next.kingston.date.valueOf() < next.island.date.valueOf()) ? next.kingston : next.island;
+                if (next.kingston.date.valueOf() < next.island.date.valueOf()) {
+                    next.next = next.kingston;
+                    next.next_location = 'kingston';
+                } else {
+                    next.next = next.island;
+                    next.next_location = 'island';
+                }
                 return next;
             }
             
@@ -207,6 +213,13 @@
                 $('.sched.sched-'+nextTimes.island.tod).addClass('next');
                 $('.sched.sched-'+nextTimes.kingston.tod).addClass('next');
                 $('.sched.sched-'+nextTimes.next.tod).addClass('next-actual');
+
+                // set body
+                if (nextTimes.next_location == 'kingston') {
+                    $('body').removeClass('next-island').addClass('next-kingston');
+                } else {
+                    $('body').removeClass('next-kingston').addClass('next-island');
+                }
             };
             
             var refreshCameras = function() {
@@ -245,16 +258,15 @@
                         var onIsland = isInside([pos.coords.latitude,pos.coords.longitude], wolfeIslandBounds);
                         console.log("on island? ", onIsland);
                         if (onIsland) {
-                            $('.kingston.next-departure.gps').hide();
-                            $('.island.next-departure.gps').show();
+                            $('body').removeClass('gps-kingston').addClass('gps-island');
                         } else {
-                            $('.kingston.next-departure.gps').show();
-                            $('.island.next-departure.gps').hide();
+                            $('body').removeClass('gps-island').addClass('gps-kingston');
                         }
                     },
                     function () {
                         // can't find position
                         console.log("geolocation failed");
+                        $('body').removeClass('gps-kingston').removeClass('gps-island');
                     },
                     {timeout:10000})
             };
@@ -312,6 +324,25 @@
             ul.schedule li div.next-actual {
                 color:green;
             }
+
+            /* hide/show the next-depature section */
+            #home li.next-departure {
+                display:none;
+            }
+            body.next-kingston #home li.kingston,
+            body.gps-kingston #home li.kingston {
+                display:block;
+            }
+            body.next-island #home li.island,
+            body.gps-island #home li.island {
+                display:block;
+            }
+            body.gps-kingston.next-island #home li.island {
+                display:none;
+            }
+            body.gps-island.next-kingston #home li.kingston {
+                display:none;
+            }
         </style>
     </head>
     <body>
@@ -322,8 +353,8 @@
                 </div>
                 <div class="scroll">
                     <ul class="edgetoedge scroll">
-                        <li class="kingston next-departure gps" style="display:none;"></li>
-                        <li class="island next-departure gps" style="display:none;"></li>
+                        <li class="kingston next-departure gps"></li>
+                        <li class="island next-departure gps"></li>
                     </ul>
                     <ul class="rounded">
                         <li class="arrow"><a href="#schedule">Schedule</a> </li>
