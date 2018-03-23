@@ -252,23 +252,25 @@
             };
 
             var refreshLocation = function() {
-                navigator.geolocation.getCurrentPosition(
-                    function (pos) { 
-                        console.log(pos); 
-                        var onIsland = isInside([pos.coords.latitude,pos.coords.longitude], wolfeIslandBounds);
-                        console.log("on island? ", onIsland);
-                        if (onIsland) {
-                            $('body').removeClass('gps-kingston').addClass('gps-island');
-                        } else {
-                            $('body').removeClass('gps-island').addClass('gps-kingston');
-                        }
-                    },
-                    function () {
-                        // can't find position
-                        console.log("geolocation failed");
-                        $('body').removeClass('gps-kingston').removeClass('gps-island');
-                    },
-                    {timeout:10000})
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(
+                        function (pos) { 
+                            console.log(pos); 
+                            var onIsland = isInside([pos.coords.latitude,pos.coords.longitude], wolfeIslandBounds);
+                            console.log("on island? ", onIsland);
+                            if (onIsland) {
+                                $('body').removeClass('gps-kingston').addClass('gps-island');
+                            } else {
+                                $('body').removeClass('gps-island').addClass('gps-kingston');
+                            }
+                        },
+                        function () {
+                            // can't find position
+                            console.log("geolocation failed");
+                            $('body').removeClass('gps-kingston').removeClass('gps-island');
+                        },
+                        {timeout:10000})
+                    }
             };
 
             
@@ -498,9 +500,6 @@
                         <li>AIS maps from <a class="inline" href="https://www.marinetraffic.com/en/ais/home/centerx:-76.3/centery:44.2/zoom:11" target="_blank">MarineTraffic.com</a></li>
                         <li>Report bugs/suggestions on <a class="inline" href="https://github.com/gregmac/WolfeFerryApp/issues" target="_blank">GitHub</a></li>
                     </ul>
-                    <p>
-                        
-                    </p>
                 </div>
                 <div class="info add-to-home">
                     <p>Add this page to your home screen.</p>
