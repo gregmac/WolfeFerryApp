@@ -273,6 +273,19 @@
                     }
             };
 
+            // find template.jit-content and replace with inner html
+            // returns true if any elements were replaced
+            var replaceJitContent = function(page) {
+                var templates = $('template.jit-content', page);
+                var changed = false;
+                templates.each(function(idx,e) {
+                    console.log(e);
+                    changed = true;
+                    e.outerHTML = e.innerHTML; // replace <template clas=jit-content> with contents
+                });
+                return changed;
+            }
+
             
             var nextTimer, cameraTimer, locationTimer;
             var ensureRefreshRunning = function() {
@@ -293,12 +306,24 @@
                 $('#jqt').bind('turn', function(e, data){
                     $('#orient').html('Orientation: ' + data.orientation);
                 });
-                
+
+                $('#jqt > div').on('pageAnimationStart', function(e, data) {
+                    console.log("anim start", this);
+                    if (data.direction == "in") {
+                        if (replaceJitContent(this)) {
+                            refreshCameras();
+                        }
+                    }
+                });
+
                 populateSchedulePage();
-                    
                 refreshNextTimes();
-                refreshCameras();
                 refreshLocation();
+                
+                // pass current page to replace any templated content
+                replaceJitContent(jQT.history[0].page[0]);
+
+                refreshCameras();
                 
                 ensureRefreshRunning();
                 
@@ -407,12 +432,15 @@
                     <a href="#" class="back">Back</a>
                 </div>
                 <div>
-                    <iframe name="marinetraffic" id="marinetraffic" 
-                        width="100%" height="480" 
-                        scrolling="no" frameborder="1" 
-                        src="http://www.marinetraffic.com/en/ais/embed/zoom:13/centery:44.215729/centerx:-76.454769/maptype:0/shownames:false/mmsi:381661/shipid:0/fleet:/fleet_id:/vtypes:/showmenu:false/remember:false">
-                        Sorry, this feature is not supported on your browser.
-                    </iframe>
+                    <template class="jit-content">
+                        <iframe name="marinetraffic" id="marinetraffic" 
+                            width="100%" height="480" 
+                            scrolling="no" frameborder="1" 
+                            src="http://www.marinetraffic.com/en/ais/embed/zoom:13/centery:44.215729/centerx:-76.453/maptype:0/shownames:false/mmsi:0/shipid:0/fleet:/fleet_id:/vtypes:/showmenu:false/remember:false">
+                            Sorry, this feature is not supported on your browser.
+                        </iframe>
+                    </template>
+                    </script>
                 </div>
             </div>
             <div id="twitter-WolfeIslander3">
@@ -426,7 +454,7 @@
                         href="https://twitter.com/groogs/lists/wolfeisland?ref_src=twsrc%5Etfw">
                         Loading..
                     </a> 
-                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    <script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                 </div>
             </div>
             <div id="twitter-MIHomeYGK">
@@ -440,17 +468,19 @@
                         href="https://twitter.com/MIHomeYGK?ref_src=twsrc%5Etfw">
                         Loading..
                     </a> 
-                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    <script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                 </div>
             </div>
-            <div id="kingston" class="kingston">
+            <div id="kingston" class="kingston jit-content">
                 <div class="toolbar">
                     <h1>Kingston Dock</h1>
                     <a href="#" class="back">Back</a>
                 </div>
-                <ul class="edgetoedge scroll">
+                <ul class="edgetoedge scroll display-on-activate">
                     <li class="kingston next-departure"></li>
-                    <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc56.jpg" /></li>
+                    <template class="jit-content">
+                        <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc56.jpg" /></li>
+                    </template>
                 </ul>
             </div>
             <div id="marysville" class="island">
@@ -458,10 +488,12 @@
                     <h1>Marysville Dock</h1>
                     <a href="#" class="back">Back</a>
                 </div>
-                <ul class="edgetoedge scroll">
+                <ul class="edgetoedge scroll display-on-activate">
                     <li class="island next-departure"></li>
-                    <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc57.jpg" /></li>
-                    <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc58.jpg" /></li>
+                    <template class="jit-content">
+                        <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc57.jpg" /></li>
+                        <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc58.jpg" /></li>
+                    </template>
                 </ul>
             </div>
             <div id="dawsons" class="island">
@@ -469,11 +501,13 @@
                     <h1>Dawson's Point Dock</h1>
                     <a href="#" class="back">Back</a>
                 </div>
-                <ul class="edgetoedge scroll">
+                <ul class="edgetoedge scroll display-on-activate">
                     <li class="island next-departure"></li>
-                    <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc60.jpg" /></li>
-                    <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc62.jpg" /></li>
-                    <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc59.jpg" /></li>
+                    <template class="jit-content">
+                        <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc60.jpg" /></li>
+                        <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc62.jpg" /></li>
+                        <li class="cam"><img data-src="http://www.cdn.mto.gov.on.ca/english/traveller/compass/camera/pictures/OttaCamera/loc59.jpg" /></li>
+                    </template>
                 </ul>
             </div>
             <div id="about">
