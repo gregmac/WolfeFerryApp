@@ -226,7 +226,8 @@
             
             var populateSchedulePage = function() {
                 var titles = '<li class="sep"><div>From Island</div><div>From Kingston</div></li>';
-                var html = titles;
+                var html = '<li class="warning">New Schedule effective September 1</li>' 
+                           + titles;
                 
                 //Note: this loop needs to be modified if the crossing times are ever not equal
                 if (schedules.kingston.length != schedules.island.length) {
@@ -403,6 +404,10 @@
             }
             ul.schedule li div.next-actual {
                 color:green;
+            }
+            .warning {
+                color:#6E8A8A;
+                text-align:center;
             }
 
             #jqt ul li a.inline { 
