@@ -181,7 +181,7 @@
             
             var populateSchedulePage = function() {
                 var titles = '<li class="sep"><div>From Island</div><div>From Kingston</div></li>';
-                var html = '<li class="warning">New Schedule effective September 1</li>' 
+                var html = ((new Date() < new Date('2018-11-01T03:00:00')) ? '<li class="warning">New Schedule effective since September 1</li>' : '')
                            + titles;
                 
                 //Note: this loop needs to be modified if the crossing times are ever not equal
