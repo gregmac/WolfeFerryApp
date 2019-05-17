@@ -2,6 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
         <title>Wolfe Island Ferry</title>
         <link rel="stylesheet" href="css/jqtouch.css" title="jQTouch">
     
@@ -14,7 +15,8 @@
             var jQT = new $.jQTouch({
                 addGlossToIcon: false,
                 statusBar: 'black-translucent',
-                preloadImages: []
+                preloadImages: [],
+                fixedViewport: false, // don't add <meta viewport>
             });
             
             var buildSchedules = function() {
