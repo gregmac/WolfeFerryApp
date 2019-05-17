@@ -27,8 +27,8 @@
                             ,{h:07,m:00}
                             ,{h:08,m:00}
                             ,{h:09,m:00}
-                            ,{h:10,m:30}
-                            ,{h:12,m:00}
+                            ,{h:10,m:00}
+                            ,{h:11,m:30}
                             ,{h:13,m:00}
                             ,{h:14,m:00}
                             ,{h:15,m:00}
@@ -40,7 +40,7 @@
                             ,{h:21,m:00}
                             ,{h:22,m:00}
                             ,{h:23,m:30}
-                            ,{h:00,m:30}
+                            ,{h:01,m:00}
                             ,{h:02,m:00}
                         ],
                         island:[
@@ -49,8 +49,8 @@
                             ,{h:07,m:30}
                             ,{h:08,m:30}
                             ,{h:09,m:30}
-                            ,{h:11,m:00}
-                            ,{h:12,m:30}
+                            ,{h:10,m:30}
+                            ,{h:12,m:00}
                             ,{h:13,m:30}
                             ,{h:14,m:30}
                             ,{h:15,m:30}
@@ -181,7 +181,8 @@
             
             var populateSchedulePage = function() {
                 var titles = '<li class="sep"><div>From Island</div><div>From Kingston</div></li>';
-                var html = ((new Date() < new Date('2018-11-07T03:00:00')) ? '<li class="warning">At Dawson&apos;s Point <a href="https://twitter.com/WolfeIslander3/status/1054129441847296001" target="_blank">starting Oct 22</a></li>' : '')
+                // show the new schedule warning for the following 6 months
+                var html = ((new Date() < new Date('2019-10-01T03:00:00')) ? '<li class="warning">New Schedule effective since April 28</li>' : '')
                            + titles;
                 
                 //Note: this loop needs to be modified if the crossing times are ever not equal
