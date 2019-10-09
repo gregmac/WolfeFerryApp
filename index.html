@@ -43,7 +43,8 @@
                             ,{h:08,m:00}
                             ,{h:09,m:00}
                             ,{h:10,m:00}
-                            ,{h:11,m:30}
+                            ,{h:11,m:00}
+                            ,{h:12,m:00}
                             ,{h:13,m:00}
                             ,{h:14,m:00}
                             ,{h:15,m:00}
@@ -65,7 +66,8 @@
                             ,{h:08,m:30}
                             ,{h:09,m:30}
                             ,{h:10,m:30}
-                            ,{h:12,m:00}
+                            ,{h:11,m:30}
+                            ,{h:12,m:30}
                             ,{h:13,m:30}
                             ,{h:14,m:30}
                             ,{h:15,m:30}
@@ -105,6 +107,7 @@
                 return schedules;
             }
             
+            var scheduleWarning = 'New Temporary Schedule as of Oct 9';
 
             var wolfeIslandBounds = [
                 [44.234161,-76.398870],
@@ -196,8 +199,8 @@
             
             var populateSchedulePage = function() {
                 var titles = '<li class="sep"><div>From Island</div><div>From Kingston</div></li>';
-                // show the new schedule warning for the following 6 months
-                var html = ((new Date() < new Date('2019-10-01T03:00:00')) ? '<li class="warning">New Schedule effective since April 28</li>' : '')
+                
+                var html = (scheduleWarning ? '<li class="warning">' + scheduleWarning + '</li>' : '')
                            + titles;
                 
                 //Note: this loop needs to be modified if the crossing times are ever not equal
@@ -334,6 +337,10 @@
                     }
                 });
 
+                if (scheduleWarning) {
+                    $("#home-warning").prepend('<li class="warning"><a href="#schedule" class="text-warning">' + scheduleWarning + '</a></li>')
+                }
+
                 populateSchedulePage();
                 refreshNextTimes();
                 refreshLocation();
@@ -419,7 +426,8 @@
                     <h1>Wolfe Island Ferry</h1>
                 </div>
                 <div class="scroll">
-                    <ul class="edgetoedge scroll">
+                    <ul id="home-warning" class="edgetoedge scroll">
+                        
                         <li class="kingston next-departure gps"></li>
                         <li class="island next-departure gps"></li>
                     </ul>
