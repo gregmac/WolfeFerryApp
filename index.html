@@ -1,10 +1,24 @@
 <!doctype html>
 <html>
     <head>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-70819-9"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-70819-9');
+        </script>
         <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
         <title>Wolfe Island Ferry</title>
         <link rel="stylesheet" href="css/jqtouch.css" title="jQTouch">
-    
+        <meta name="description" content="Live camera views and schedule of the Wolfe Island Ferry between Kingston and Wolfe Island, Ontario" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+        <link rel="manifest" href="/site.webmanifest">
+
         <script src="lib/jquery-1.7.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="lib/jqtouch.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="lib/jqtouch-jquery.min.js" type="text/javascript" charset="utf-8"></script>
@@ -14,56 +28,60 @@
             var jQT = new $.jQTouch({
                 addGlossToIcon: false,
                 statusBar: 'black-translucent',
-                preloadImages: []
+                preloadImages: [],
+                fixedViewport: false, // don't add <meta viewport>
             });
             
             var buildSchedules = function() {
                 // note: if the schedules change and there are non-equal number of 
                 // crossings, there is a loop below that needs to be updated
-                var schedules = {
-                    kingston:[
-                         {h:06,m:15}
-                        ,{h:07,m:15}
-                        ,{h:08,m:30}
-                        ,{h:09,m:30}
-                        ,{h:10,m:30}
-                        ,{h:11,m:30}
-                        ,{h:12,m:30}
-                        ,{h:14,m:00}
-                        ,{h:15,m:00}
-                        ,{h:16,m:00}
-                        ,{h:17,m:00}
-                        ,{h:18,m:00}
-                        ,{h:19,m:00}
-                        ,{h:20,m:00}
-                        ,{h:21,m:00}
-                        ,{h:22,m:00}
-                        ,{h:23,m:20}
-                        ,{h:00,m:40}
-                        ,{h:02,m:00}
-                    ],
-                    island:[
-                         {h:05,m:45}
-                        ,{h:06,m:45}
-                        ,{h:07,m:45}
-                        ,{h:09,m:00}
-                        ,{h:10,m:00}
-                        ,{h:11,m:00}
-                        ,{h:12,m:00}
-                        ,{h:13,m:15}
-                        ,{h:14,m:30}
-                        ,{h:15,m:30}
-                        ,{h:16,m:30}
-                        ,{h:17,m:30}
-                        ,{h:18,m:30}
-                        ,{h:19,m:30}
-                        ,{h:20,m:30}
-                        ,{h:21,m:30}
-                        ,{h:22,m:40}
-                        ,{h:00,m:00}
-                        ,{h:01,m:20}
-                    ]
-                };
+                var schedules = 
+                    {
+                        kingston:[
+                             {h:06,m:00}
+                            ,{h:07,m:00}
+                            ,{h:08,m:00}
+                            ,{h:09,m:00}
+                            ,{h:10,m:00}
+                            ,{h:11,m:00}
+                            ,{h:12,m:00}
+                            ,{h:13,m:00}
+                            ,{h:14,m:00}
+                            ,{h:15,m:00}
+                            ,{h:16,m:00}
+                            ,{h:17,m:00}
+                            ,{h:18,m:00}
+                            ,{h:19,m:00}
+                            ,{h:20,m:00}
+                            ,{h:21,m:00}
+                            ,{h:22,m:00}
+                            ,{h:23,m:30}
+                            ,{h:01,m:00}
+                            ,{h:02,m:00}
+                        ],
+                        island:[
+                             {h:05,m:30}
+                            ,{h:06,m:30}
+                            ,{h:07,m:30}
+                            ,{h:08,m:30}
+                            ,{h:09,m:30}
+                            ,{h:10,m:30}
+                            ,{h:11,m:30}
+                            ,{h:12,m:30}
+                            ,{h:13,m:30}
+                            ,{h:14,m:30}
+                            ,{h:15,m:30}
+                            ,{h:16,m:30}
+                            ,{h:17,m:30}
+                            ,{h:18,m:30}
+                            ,{h:19,m:30}
+                            ,{h:20,m:30}
+                            ,{h:21,m:30}
+                            ,{h:22,m:30}
+                            ,{h:00,m:00}
+                            ,{h:01,m:30}
+                        ]
+                    };
                 
                 // expand out the base objects
                 
@@ -89,6 +107,7 @@
                 return schedules;
             }
             
+            var scheduleWarning = 'New Temporary Schedule as of Oct 9';
 
             var wolfeIslandBounds = [
                 [44.234161,-76.398870],
@@ -180,7 +199,9 @@
             
             var populateSchedulePage = function() {
                 var titles = '<li class="sep"><div>From Island</div><div>From Kingston</div></li>';
-                var html = titles;
+                
+                var html = (scheduleWarning ? '<li class="warning">' + scheduleWarning + '</li>' : '')
+                           + titles;
                 
                 //Note: this loop needs to be modified if the crossing times are ever not equal
                 if (schedules.kingston.length != schedules.island.length) {
@@ -316,6 +337,10 @@
                     }
                 });
 
+                if (scheduleWarning) {
+                    $("#home-warning").prepend('<li class="warning"><a href="#schedule" class="text-warning">' + scheduleWarning + '</a></li>')
+                }
+
                 populateSchedulePage();
                 refreshNextTimes();
                 refreshLocation();
@@ -345,6 +370,7 @@
             }
             li.cam img {
                 max-width:100%;
+                touch-action: pinch-zoom;
             }
             
             ul.schedule li div {
@@ -357,6 +383,10 @@
             }
             ul.schedule li div.next-actual {
                 color:green;
+            }
+            .warning {
+                color:#6E8A8A;
+                text-align:center;
             }
 
             #jqt ul li a.inline { 
@@ -396,7 +426,8 @@
                     <h1>Wolfe Island Ferry</h1>
                 </div>
                 <div class="scroll">
-                    <ul class="edgetoedge scroll">
+                    <ul id="home-warning" class="edgetoedge scroll">
+                        
                         <li class="kingston next-departure gps"></li>
                         <li class="island next-departure gps"></li>
                     </ul>
@@ -440,7 +471,6 @@
                             Sorry, this feature is not supported on your browser.
                         </iframe>
                     </template>
-                    </script>
                 </div>
             </div>
             <div id="twitter-WolfeIslander3">
