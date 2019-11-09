@@ -43,8 +43,7 @@
                             ,{h:08,m:00}
                             ,{h:09,m:00}
                             ,{h:10,m:00}
-                            ,{h:11,m:00}
-                            ,{h:12,m:00}
+                            ,{h:11,m:30}
                             ,{h:13,m:00}
                             ,{h:14,m:00}
                             ,{h:15,m:00}
@@ -66,8 +65,7 @@
                             ,{h:08,m:30}
                             ,{h:09,m:30}
                             ,{h:10,m:30}
-                            ,{h:11,m:30}
-                            ,{h:12,m:30}
+                            ,{h:12,m:00}
                             ,{h:13,m:30}
                             ,{h:14,m:30}
                             ,{h:15,m:30}
@@ -107,7 +105,7 @@
                 return schedules;
             }
             
-            var scheduleWarning = 'New Temporary Schedule as of Oct 9';
+            var scheduleWarning = new Date() < Date(2019,11,15) ? 'Regular schedule resumed Nov 8' : '';
 
             var wolfeIslandBounds = [
                 [44.234161,-76.398870],
