@@ -281,17 +281,17 @@
                             console.log('geo', geo, 'onIsland', onIsland, 'inKingston', inKingston); 
 
                             if (onIsland) {
-                                $('body').removeClass('gps-kingston').addClass('gps-island');
+                                $('body').attr('data-gps', 'island');
                             } else if (inKingston) {
-                                $('body').removeClass('gps-island').addClass('gps-kingston');
+                                $('body').attr('data-gps', 'kingston');
                             } else {
-                                $('body').removeClass('gps-kingston').removeClass('gps-island');
+                                $('body').attr('data-gps', 'other');
                             }
                         },
                         function () {
                             // can't find position
                             console.log("geolocation failed");
-                            $('body').removeClass('gps-kingston').removeClass('gps-island');
+                            $('body').attr('data-gps', 'unknown');
                         },
                         {timeout:10000})
                     }
@@ -420,17 +420,17 @@
                 display:none;
             }
             body.next-kingston #home li.kingston,
-            body.gps-kingston #home li.kingston {
+            body[data-gps=kingston] #home li.kingston {
                 display:block;
             }
             body.next-island #home li.island,
-            body.gps-island #home li.island {
+            body[data-gps=island] #home li.island {
                 display:block;
             }
-            body.gps-kingston.next-island #home li.island {
+            body[data-gps=kingston].next-island #home li.island {
                 display:none;
             }
-            body.gps-island.next-kingston #home li.kingston {
+            body[data-gps=island].next-kingston #home li.kingston {
                 display:none;
             }
         </style>
