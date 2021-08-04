@@ -7,7 +7,10 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'UA-70819-9', { send_page_view: false });
+        gtag('config', 'UA-70819-9', {
+             send_page_view: false,
+             custom_map: { dimension1: 'geoLocation' }
+        });
         </script>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
@@ -281,17 +284,17 @@
                             console.log('geo', geo, 'onIsland', onIsland, 'inKingston', inKingston); 
 
                             if (onIsland) {
-                                $('body').attr('data-gps', 'island');
+                                $('body').attr('data-geo', 'Island');
                             } else if (inKingston) {
-                                $('body').attr('data-gps', 'kingston');
+                                $('body').attr('data-geo', 'Kingston');
                             } else {
-                                $('body').attr('data-gps', 'other');
+                                $('body').attr('data-geo', 'Other');
                             }
                         },
                         function () {
                             // can't find position
                             console.log("geolocation failed");
-                            $('body').attr('data-gps', 'unknown');
+                            $('body').attr('data-geo', 'Unknown');
                         },
                         {timeout:10000})
                     }
@@ -327,7 +330,8 @@
             window.addEventListener("hashchange", function() {
                 gtag('event', 'page_view', {
                     page_path: window.location.hash,
-                    page_title: $('div.current h1:first').text()
+                    page_title: $('div.current h1:first').text(),
+                    geoLocation: $('body').attr('data-geo')
                 });
             }, false);
             
@@ -364,9 +368,10 @@
                 // save timing info
                 if (window.performance) {
                     gtag('event', 'timing_complete', {
-                        'name': 'load',
-                        'value': Math.round(window.performance.now()),
-                        'event_category': 'Finished'
+                        name: 'load',
+                        value: Math.round(window.performance.now()),
+                        event_category: 'Finished',
+                        geoLocation: $('body').attr('data-geo')
                     });
                 }
             });
@@ -424,17 +429,17 @@
                 display:none;
             }
             body.next-kingston #home li.kingston,
-            body[data-gps=kingston] #home li.kingston {
+            body[data-geo=Kingston] #home li.kingston {
                 display:block;
             }
             body.next-island #home li.island,
-            body[data-gps=island] #home li.island {
+            body[data-geo=Island] #home li.island {
                 display:block;
             }
-            body[data-gps=kingston].next-island #home li.island {
+            body[data-geo=Kingston].next-island #home li.island {
                 display:none;
             }
-            body[data-gps=island].next-kingston #home li.kingston {
+            body[data-geo=Island].next-kingston #home li.kingston {
                 display:none;
             }
         </style>
