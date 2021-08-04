@@ -355,7 +355,15 @@
                 refreshCameras();
                 
                 ensureRefreshRunning();
-                
+
+                // save timing info
+                if (window.performance) {
+                    gtag('event', 'timing_complete', {
+                        'name': 'load',
+                        'value': Math.round(window.performance.now()),
+                        'event_category': 'Finished'
+                    });
+                }
             });
         </script>        
         <style type="text/css" media="screen">
