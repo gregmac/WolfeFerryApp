@@ -321,7 +321,7 @@
             // analytics callback 
             window.addEventListener("hashchange", function() {
                 gtag('event', 'page_view', {
-                    page_path: window.location.fragment,
+                    page_path: window.location.hash,
                     page_title: $('div.current h1:first').text()
                 });
             }, false);
