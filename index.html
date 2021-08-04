@@ -139,9 +139,9 @@
                     // or, end < start (eg, from 11pm to 1am), 
                     //     compare is before start (eg, 1am)
                     //     xor compare is after end (eg, 11pm)
-                    if (end < start) {
-                        console.log('end<start', end, start, compare, (compare < start), (compare > end));
-                    }
+
+                    //if (end < start) console.log('end<start', end, start, compare, (compare < start), (compare > end));
+
                     return ((end > start) && (compare >= start) && (compare < end))
                            || ((end < start) 
                                &&  ((compare < start) || (compare > end))
