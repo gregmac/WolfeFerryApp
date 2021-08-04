@@ -332,6 +332,11 @@
                         if (replaceJitContent(this)) {
                             refreshCameras();
                         }
+
+                        if (this.id) {
+                            // record page
+                            ga('send', 'pageview', this.id);
+                        }
                     }
                 });
 
