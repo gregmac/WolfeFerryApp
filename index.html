@@ -273,14 +273,19 @@
             var refreshLocation = function() {
                 if ("geolocation" in navigator) {
                     navigator.geolocation.getCurrentPosition(
-                        function (pos) { 
-                            console.log(pos); 
-                            var onIsland = isInside([pos.coords.latitude,pos.coords.longitude], wolfeIslandBounds);
-                            console.log("on island? ", onIsland);
+                        function (geo) { 
+
+                            var onIsland = isInside([geo.coords.latitude,geo.coords.longitude], wolfeIslandBounds);
+                            var inKingston = Math.floor(geo.coords.latitude) == 44 && Math.ceil(geo.coords.longitude) == -76;
+
+                            console.log('geo', geo, 'onIsland', onIsland, 'inKingston', inKingston); 
+
                             if (onIsland) {
                                 $('body').removeClass('gps-kingston').addClass('gps-island');
-                            } else {
+                            } else if (inKingston) {
                                 $('body').removeClass('gps-island').addClass('gps-kingston');
+                            } else {
+                                $('body').removeClass('gps-kingston').removeClass('gps-island');
                             }
                         },
                         function () {
