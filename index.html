@@ -7,7 +7,7 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'UA-70819-9');
+        gtag('config', 'UA-70819-9', { send_page_view: false });
         </script>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
@@ -318,7 +318,13 @@
             
             var nextTimes = null; // periodically refreshed with the next times
             
-            
+            // analytics callback 
+            window.addEventListener("hashchange", function() {
+                gtag('event', 'page_view', {
+                    page_path: window.location.fragment,
+                    page_title: $('div.current h1:first').text()
+                });
+            }, false);
             
             $(function(){
                 // Orientation callback event
@@ -331,11 +337,6 @@
                     if (data.direction == "in") {
                         if (replaceJitContent(this)) {
                             refreshCameras();
-                        }
-
-                        if (this.id) {
-                            // record page
-                            ga('send', 'pageview', this.id);
                         }
                     }
                 });
