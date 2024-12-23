@@ -47,7 +47,8 @@
                             ,{h:08,m:00}
                             ,{h:09,m:00}
                             ,{h:10,m:00}
-                            ,{h:11,m:30}
+                            ,{h:11,m:00}
+                            ,{h:12,m:00}
                             ,{h:13,m:00}
                             ,{h:14,m:00}
                             ,{h:15,m:00}
@@ -69,7 +70,8 @@
                             ,{h:08,m:30}
                             ,{h:09,m:30}
                             ,{h:10,m:30}
-                            ,{h:12,m:00}
+                            ,{h:11,m:30}
+                            ,{h:12,m:30}
                             ,{h:13,m:30}
                             ,{h:14,m:30}
                             ,{h:15,m:30}
@@ -109,7 +111,7 @@
                 return schedules;
             }
             
-            var scheduleWarning = new Date() < new Date(2019,11,15) ? 'Regular schedule resumed Nov 8' : '';
+            var scheduleWarning = 'Using Wolfe Islander III on 60-minute schedule (Dec 22)';
 
             var wolfeIslandBounds = [
                 [44.234161,-76.398870],
@@ -424,7 +426,7 @@
                 color:green;
             }
             .warning {
-                color:#6E8A8A;
+                color:#6E8A8A !important;
                 text-align:center;
             }
 
