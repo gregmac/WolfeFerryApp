@@ -3,7 +3,7 @@ WolfeFerryApp
 
 > **Live at: [www.wiferry.ca](http://www.wiferry.ca)**
  
-This is a basic app to view the schedule and cameras for the <a href="http://www.wolfeisland.com/ferry.php">Wolfe Island Ferry</a>. It's mainly designed for use from a smart phone but works from any web browser.
+This is a basic app to view the schedule and cameras for the [Wolfe Island Ferry](https://www.ontario.ca/page/ferry-services#section-1). It's mainly designed for use from a smart phone but works from any web browser.
 
 
 ## Data feeds
